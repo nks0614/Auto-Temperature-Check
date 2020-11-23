@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".view.MainActivity">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.project.threeschool.viewmodel.MainViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="사용 용도를 골라주세요"
+            android:textSize="24sp"
+            android:textColor="@color/black"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/groupBtn"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_percent="0.2"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.11"
+            android:backgroundTint="@color/black"
+            android:text="단체"
+            android:layout_marginBottom="50dp"
+            android:onClick="@{()->viewModel.groupBtnCall()}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/normalBtn"
+            />
+
+        <Button
+            android:id="@+id/normalBtn"
+            android:layout_width="0dp"
+            app:layout_constraintWidth_percent="0.2"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_percent="0.11"
+            android:backgroundTint="@color/black"
+            android:text="일반"
+            android:layout_marginBottom="50dp"
+            android:onClick="@{()->viewModel.normalBtnCall()}"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/groupBtn"
+            />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
