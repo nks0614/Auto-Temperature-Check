@@ -30,10 +30,10 @@
         android:text=""
         android:textSize="24sp"
         android:textColor="#FF0000"
+        android:layout_marginStart="80dp"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@id/numText"
-        app:layout_constraintEnd_toStartOf="@id/checkText"/>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/checkText"

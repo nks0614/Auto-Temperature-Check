@@ -10,22 +10,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.project.threeschool.R
 import com.project.threeschool.model.Members
 
-class TempListAdapter(val list : ArrayList<Members>):RecyclerView.Adapter<TempListAdapter.Holder>() {
+class TempListAdapter(val list : ArrayList<Double>):RecyclerView.Adapter<TempListAdapter.Holder>() {
     var n : Int = 1
     inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val numText = itemView.findViewById<TextView>(R.id.numText)
         val tempText = itemView.findViewById<TextView>(R.id.tempText)
         val checkText = itemView.findViewById<TextView>(R.id.checkText)
 
-        fun bind(m : Members) {
+        fun bind(d : Double) {
             numText.text = n.toString()
             n++
-            tempText.text = m.temperature.toString()
-
-            if(m.checkTemp){
-                checkText.text = "정상"
-            }else{
+            tempText.text = d.toString()
+            if(d > 37.4 || d < 34){
                 checkText.text = "비정상"
+            }else{
+                checkText.text = "정상"
             }
 
             itemView.setOnClickListener {

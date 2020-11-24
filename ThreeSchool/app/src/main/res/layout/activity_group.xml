@@ -29,12 +29,25 @@
             app:layout_constraintEnd_toEndOf="parent"/>
 
         <TextView
+            android:id="@+id/gradeText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="@={viewModel.grade}"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@+id/titleText"
+            app:layout_constraintBottom_toTopOf="@id/columnText"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <TextView
             android:id="@+id/columnText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:text="번호                       온도                        정상/비정상"
-            app:layout_constraintTop_toBottomOf="@id/titleText"
+            app:layout_constraintTop_toBottomOf="@id/gradeText"
             app:layout_constraintBottom_toTopOf="@id/rcViewList"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
@@ -44,21 +57,36 @@
             android:layout_width="0dp"
             app:layout_constraintWidth_percent="0.8"
             android:layout_height="0dp"
-            app:layout_constraintHeight_percent="0.8"
+            app:layout_constraintHeight_percent="0.7"
             android:layout_marginTop="16dp"
             android:overScrollMode="never"
             app:layout_constraintTop_toBottomOf="@id/columnText"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             tools:listitem="@layout/item_list"
+            app:adapter="@{viewModel.tempListAdapter}"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-        <TextView
+        <Button
+            android:id="@+id/refreshBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
+            android:text="새로 고침"
             android:layout_margin="16dp"
-            android:text="단체 발열 체크는 지정한 인원이\n모두 체크할 시 엑셀을 반출합니다."
-            android:gravity="right"
+            android:onClick="@{()->viewModel.refreshBtnCall()}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+
+        <Button
+            android:id="@+id/importExcelBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/black"
+            android:text="엑셀로 내보내기"
+            android:layout_margin="16dp"
+            android:onClick="@{()->viewModel.importExcelBtnCall()}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 

@@ -2,18 +2,17 @@ package com.project.threeschool.view
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.content.Intent
 import android.net.Uri
-import android.util.Log
+import android.telecom.Call
 import android.view.View
+import android.widget.Button
 import android.widget.EditText
 import androidx.lifecycle.Observer
 import com.project.simplecode.spaToastShort
 import com.project.threeschool.R
-import com.project.threeschool.adapter.TempListAdapter
 import com.project.threeschool.base.BaseActivity
 import com.project.threeschool.databinding.ActivityGroupBinding
-import com.project.threeschool.model.Members
+import com.project.threeschool.network.RetrofitClient
 import com.project.threeschool.viewmodel.GroupViewModel
 import kotlinx.android.synthetic.main.activity_group.*
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
@@ -31,36 +30,39 @@ class GroupActivity : BaseActivity<ActivityGroupBinding, GroupViewModel>() {
     override val layoutRes: Int
         get() = R.layout.activity_group
 
-    var tempListAdapter : TempListAdapter = TempListAdapter(viewModel.originList)
-
     override fun init() {
-        dialog()
-        rcViewList.adapter = tempListAdapter
+        with(viewModel){
+            retrofit = RetrofitClient.getInstance()
+            API = RetrofitClient.getService()
+            callList()
+        }
     }
 
     override fun observerViewModel() {
         with(viewModel){
-            count.observe(this@GroupActivity, Observer {
-                Log.d("count observe", count.value.toString())
-                listAdd(Members(44.0, true))
+
+            importExcelBtn.observe(this@GroupActivity, Observer {
+                dialog()
             })
 
-            liveList.observe(this@GroupActivity, Observer {
-                tempListAdapter.notifyDataSetChanged()
-                if (count.value == liveList.value?.size) {
-                    saveExcel()
-                    finish()
-                }
+            refreshBtn.observe(this@GroupActivity, Observer {
+                callList()
             })
+
         }
 
     }
 
-    fun saveExcel() {
+    private fun saveExcel() {
         var workbook: Workbook = HSSFWorkbook()
         var sheet: Sheet = workbook.createSheet()
         var row: Row = sheet.createRow(0)
         var cell: Cell
+
+        cell = row.createCell(0)
+        cell.setCellValue(viewModel.grade.value)
+
+        row = sheet.createRow(1)
 
         cell = row.createCell(0)
         cell.setCellValue("번호")
@@ -71,20 +73,20 @@ class GroupActivity : BaseActivity<ActivityGroupBinding, GroupViewModel>() {
         cell = row.createCell(2)
         cell.setCellValue("정상/비정상")
 
-        for (i in 0 until viewModel.originList.size) {
-            row = sheet.createRow(i + 1)
+        for (i in 0 until viewModel.list.size) {
+            row = sheet.createRow(i + 2)
             cell = row.createCell(0)
             cell.setCellValue((i + 1).toDouble())
             cell = row.createCell(1)
-            cell.setCellValue(viewModel.originList[i].temperature)
+            cell.setCellValue(viewModel.list[i])
             cell = row.createCell(2)
-            if (viewModel.originList[i].checkTemp) {
-                cell.setCellValue("정상")
-            } else {
+            if (viewModel.list[i] > 37.4 || viewModel.list[i] < 34) {
                 cell.setCellValue("비정상")
+            } else {
+                cell.setCellValue("정상")
             }
         }
-        val xlsFile = File(getExternalFilesDir(null), "checkTemp.xls")
+        val xlsFile = File(getExternalFilesDir(null), viewModel.fileName.value!!)
         try {
             val os = FileOutputStream(xlsFile)
             workbook.write(os) // 외부 저장소에 엑셀 파일 생성
@@ -93,13 +95,7 @@ class GroupActivity : BaseActivity<ActivityGroupBinding, GroupViewModel>() {
         }
         val path: Uri = Uri.fromFile(xlsFile)
         spaToastShort("${xlsFile.absolutePath} 에 저장되었습니다")
-//        val shareIntent = Intent(Intent.ACTION_SEND)
-//        shareIntent.type = "application/excel"
-//        shareIntent.putExtra(Intent.EXTRA_STREAM, path)
-//        startActivity(Intent.createChooser(shareIntent, "엑셀 내보내기"))
     }
-
-
 
     private fun dialog(){
         val dialogView: View = layoutInflater.inflate(R.layout.dialog_count, null)
@@ -110,10 +106,10 @@ class GroupActivity : BaseActivity<ActivityGroupBinding, GroupViewModel>() {
 
         builder.setPositiveButton("입력", DialogInterface.OnClickListener { dialog, pos ->
             if (edit.text.toString().isNullOrBlank()) {
-                spaToastShort("값을 적어주세요.")
-                finish()
+                spaToastShort("파일 이름을 적어주세요.")
             } else {
-                viewModel.count.value = edit.text.toString().toInt()
+                viewModel.fileName.value = edit.text.toString() + ".xls"
+                saveExcel()
             }
         })
 
